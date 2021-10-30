@@ -1,0 +1,149 @@
+#include <iostream>
+#include <cstring>
+#include <vector>
+
+
+using namespace std;
+const int maxN = 10000;
+
+template <class Temp>
+class SeqList{
+public:
+    SeqList():N(0) {}
+    SeqList(int a):capacity(a), N(0) {}
+
+    int capacity;
+    int N ;
+    Temp* head = (Temp*) malloc(sizeof(Temp)*capacity);
+
+    int size = sizeof(head);
+
+    void insert(Temp value){
+        if (N < capacity)
+            head[N++] = value;
+        return;
+    }
+
+    void insert(Temp value, int index){
+        for (int j = N-1; j >= index ; --j) {
+            head[j+1] = head[j];
+        }
+        N++;
+        head[index] = value;
+    }
+
+    void erase_val(Temp val){
+        for (int index = 0; index < N; ++index) {
+            if (head[index] == val){
+                pop(index);
+            }
+        }
+    }
+
+    void pop(){
+        N--;
+    }
+
+    void pop(int index){
+        for (int j = index; j < N - 1; ++j) {
+            head[j] = head[j+1];
+        }
+        N--;
+    }
+
+    int getSize(){
+        return N;
+    }
+
+    bool isEmpty(){
+        return !N;
+    }
+
+    Temp get(int i){
+        if (i < N)
+        {
+            return head[i];
+        }
+        else
+            return -1;
+    }
+
+    void changeCapacityTo(int newCapacity){
+        capacity = newCapacity;
+        Temp* old = head;
+        N = min(N , newCapacity);
+        Temp* newHead = (Temp*) malloc(sizeof(Temp)*capacity);
+//        Temp* newHead = new Temp(capacity*sizeof(Temp));
+        for (int i = 0; i < N; ++i) {
+            newHead[i] = head[i];
+        }
+        delete head ;
+        head = newHead;
+    }
+
+    void output(){
+        cout << "Output: " ;
+        for (int i = 0; i < N; ++i) {
+            cout << get(i) << " " ;
+        }
+        cout << endl;
+    }
+    void outputAddress(){
+        cout << "Output address: " ;
+        for (int i = 0; i < 13; ++i) {
+            cout << &head[i] << " " ;
+        }
+        cout << endl;
+    }
+};
+
+int main (){
+
+    SeqList<int> list(8) ;
+    for (int i = 0; i < 8; ++i) {
+        list.insert(i+1);
+    }
+
+    list.output();
+    cout <<"Head address: " <<  list.head << endl;
+    cout <<"Size: " << list.size << endl;
+    cout <<"Capacity: " <<  list.capacity << endl;
+    cout << endl;
+    list.changeCapacityTo(10);
+
+    for (int i = 9; i < 13 ; ++i) {
+        list.insert(i*i);
+    }
+    list.output();
+    cout <<"Head address: " <<  list.head << endl;
+    cout <<"Size: " << list.size << endl;
+    cout <<"Capacity: " <<  list.capacity << endl;
+
+    list.outputAddress();
+
+//    for (int i = 0; i < list.size(); ++i) {
+//        cout << list.get(i) << " ";
+//    }
+//
+//    cout << "\nBefore insertion, the size is " <<list.size() << endl;
+//    list.insert(89 , 4);
+//    cout << "After insertion, the size is " <<list.size() << endl;
+//    for (int i = 0 ; i < list.size() ; ++i){
+//        cout << list.get(i) << " ";
+//    }
+//
+//    cout << "\nBefore popping, the size is " <<list.size() << endl;
+//    list.pop(3);
+//    cout << "After popping, the size is " <<list.size() << endl;
+//    for (int i = 0 ; i < list.size() ; ++i){
+//        cout << list.get(i) << " ";
+//    }
+//
+//    cout << "\nBefore erasing, the size is " <<list.size() << endl;
+//    list.erase_val(89);
+//    cout << "After erasing, the size is " <<list.size() << endl;
+//    for (int i = 0 ; i < list.size() ; ++i){
+//        cout << list.get(i) << " ";
+//    }
+
+} 

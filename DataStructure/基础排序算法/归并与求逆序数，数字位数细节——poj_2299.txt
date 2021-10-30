@@ -1,0 +1,70 @@
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+const int INF = 1000000000; // necessary to be large enough cuz a[i] <= 10e -1
+__int64 time = 0; // how many times we need to swap,"long long" to store
+int a[500000];
+__int64 times[10000];
+
+
+
+void merge(int* a, int begin, int mid, int end){
+    int len_l = mid-begin+1;
+    int len_r = end-mid;
+
+    int left[250000];
+    int right[250000];
+
+    for (int i = 0; i < len_l; ++i) {
+        left[i] = a[i+begin];
+    }
+    for (int i = 0; i < len_r; ++i) {
+        right[i] = a[i+mid+1];
+    }
+    left[len_l] = INF;
+    right[len_r] = INF;
+
+    int i = 0, j = 0;
+    for (int k = begin; k <= end; ++k){
+        if (left[i] > right[j]){
+            a[k] = right[j++];
+            time += len_l-i; // get times
+        }
+        else{
+            a[k] = left[i++];
+        }
+    }
+}
+
+void mergeSort (int* a, int begin, int end){
+    if (end > begin){
+        int mid = (begin+end)/2;
+        mergeSort(a, begin, mid);
+        mergeSort(a, mid+1, end);
+        merge(a, begin, mid, end);
+    }
+}
+
+int main(){
+    int m, input;
+    int k = 0;
+
+    while (cin >> m){
+        if (m == 0)
+            break;
+        for (int i = 0; i < m; ++i) {
+            cin >> input;
+            a[i] = input;
+        }
+
+        mergeSort(a, 0, m-1);
+        times[k++] = time;
+        time = 0;
+    }
+
+    for (int j = 0; j < k; ++j) {
+        printf("%I64d\n", times[j]);
+    }
+    return 0;
+}

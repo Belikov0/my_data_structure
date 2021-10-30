@@ -1,0 +1,41 @@
+#include <iostream>
+#include <list>
+using namespace std;
+int main(){
+
+    int N;
+    cin >> N;
+    int nums;
+    list<int> l[1000];
+
+    for (int i = 0; i < N; i++){ // init queue
+        cin >> nums;
+        for (int j = 0; j < nums; j++){
+            l[i].push_back(j+1);
+        }
+    }
+
+
+    for (int i = 0; i < N; i++){
+        list<int>::iterator it;
+        int k = 2;
+        while (l[i].size() > 3) {
+            int counts = 1; // every turn start from 1
+            for (it = l[i].begin(); it != l[i].end();) {
+                if (counts++%k == 0)
+                    it = l[i].erase(it); // erase cur and return next
+                else
+                    it++;
+            }
+            k = (k == 2 ? 3 : 2); // 2 and 3
+        }
+        for (it = l[i].begin(); it != l[i].end(); ){
+            cout << *it;
+            if (++it != l[i].end())
+                cout << " ";
+        }
+        cout << endl;
+    }
+
+
+}

@@ -1,0 +1,185 @@
+
+
+	#include <iostream>
+	#include <cstring>
+	#include <string>
+
+	using namespace std;
+
+	const int INF = 10000;
+
+	int violentMatch (char* s , char* p){  // 暴力查找算法
+
+		int slen = strlen(s);
+		int plen = strlen(p);
+
+		int i = 0 , j = 0;
+		while ( i < slen && j < plen )
+		{
+			if(s[i] == p[j]) // if true , match next char
+			{
+				i++;
+				j++;
+			}
+			else   // if false , P backs to the front an S steps to the next char
+			{
+				i = i - j + 1;
+				j = 0;
+			}
+		}
+
+		if (j == plen)     // every char in P has been visited
+		{
+			return i-j;
+		}
+		else
+		{
+			return -1;
+		}
+
+	}
+
+	int ne[100];
+
+	// 获得next数组
+	void getNe(char* P){
+
+		int len = strlen(P);
+		int  j = 0;
+		ne[0] = 0;
+
+		for (int i = 1; i < len; ++i)
+		{
+			while ( j > 0 && P[i] != P[j])    // 不匹配，回跳
+				j = ne[j-1];
+
+			if (P[i] == P[j])       // 如果相等，则自加，验证下一对字符
+				ne[i] = ++j;
+			else                    // 否则，表明j = 0, 则最长公共前后缀为0
+				ne[i] = 0;
+		}
+
+	}
+
+	int KMP_matcher(char* S , char* P){
+
+		int  j = 0;
+		int len_S = strlen(S);
+		int len_P = strlen(P);
+
+		for (int i = 0; i < len_S; ++i) {
+
+			while(j > 0 && S[i] != P[j] )   // 如果不匹配，返回上一个最长公共前后缀的后面比较
+				j = ne[j-1];
+
+			if (S[i] == P[j])         // 如果匹配则j++，匹配后面一个，如果不相等表明j == 0,那么j不自己加，直接进入下一个循环从头开始匹配
+				j++;
+
+			if (j == len_P )    // j++后超过自身长度，表明模板链全部匹配完成
+				return i-j+1;
+		}
+
+    return -1;
+	}
+	
+	void printNe(int ne[]){
+		int i = 0;
+		while (ne[i] != 1000)
+		{
+			cout << ne[i++] << "  ";
+		}
+
+	}
+
+	int main (){
+
+		char S[13] = "abbaabababb";
+		char P[7]  = "ababa";
+
+		for (int i = 0; i < 100; ++i) {
+			ne[i] = 1000;
+		}
+		getNe(P);
+		printNe(ne);
+		cout << endl;
+		int n = KMP_matcher(S , P);
+		cout << n << endl;
+
+	}
+	
+	
+	
+// 从下标为1开始的，将字符串的最长公共前后缀+1的值记录在后一字符上的方式（未完成）
+
+	#include <iostream>
+	#include <cstring>
+	#include <string>
+
+	using namespace std;
+
+	const int INF = 10000;
+
+
+	int prefix[100];
+
+	void prefix_function(char* P);
+	int KMP_matcher(char* T , char* P);
+	void printPi(int prefix[]);
+
+
+	int main (){
+
+		char S[13] = "abbaabababb";
+		char P[7]  = "ababa";
+
+		for (int i = 0; i < 100; ++i) {
+			prefix[i] = 1000;
+		}
+		prefix_function(P);
+		printPi(prefix);
+		cout << endl;
+		int n = KMP_matcher(S , P);
+		cout << n << endl;
+
+
+	}
+
+	void prefix_function(char* P){
+		for (int i = 0; i < 100; ++i) {
+			prefix[i] = 1000;
+		}
+		prefix[0] = -1;
+		prefix[1] = 0;
+		int len = strlen(P);
+
+		int i = 1 , j = 0;
+		while (i <= len)
+		{
+			if (j == 0 || P[i] == P[j])      // 在这里 prefix[i] 表示下标为i的元素前面所有项的最长公共前后缀+1
+				prefix[++i] = ++j;           // +1刚好与此种表示从1开始计字符位置的表示方法相适应
+			else                             // 如果j == 0 , 表明返回到开始（有且仅有prefix[1] == 0）
+				j = prefix[j];               // 那么将下一位赋值为1，表明若在此
+		}
+	}
+
+
+	int KMP_matcher(char* T , char* P){
+
+		int len_T = strlen(T);
+		int len_P = strlen(P);
+		
+
+
+
+
+
+	}
+
+	void printPi(int prefix[]){
+		int i = 0;
+		while (prefix[i] != 1000)
+		{
+			cout << prefix[i++] << "  ";
+		}
+
+	}

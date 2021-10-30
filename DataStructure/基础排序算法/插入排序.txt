@@ -1,0 +1,55 @@
+
+
+
+#include <iostream>
+#include<bits/stdc++.h>
+
+using namespace std;
+
+void insertionSort(int a[] , int len);
+
+int main(){
+
+    int len ;
+    cin >> len;
+    cout << endl;
+    int a[len] ;   // under c99 standard you can do this
+    for (int i = 0; i < len; ++i) {
+        cin >> a[i];
+    }
+    
+    insertionSort(a , len);
+
+    for (int i = 0; i < len; ++i)
+    {
+        cout << a[i] << "  " ;
+    }
+}
+
+void insertionSort(int a[] , int b[] ,int len){
+    if (len < 2)
+    {
+
+    }
+    else
+    {
+        int exchange;
+        int temp;
+        for (int i = 0; i < len - 1; ++i)
+        {
+            temp = i;
+            while (temp >= 0)
+            {
+                if (a[temp] > a[temp + 1])
+                {
+                    exchange = a[temp + 1];
+                    a[temp + 1] = a[temp];
+                    a[temp] = exchange;
+                    temp--;
+                } else {
+                    break;
+                }
+            }
+        }
+    }
+}

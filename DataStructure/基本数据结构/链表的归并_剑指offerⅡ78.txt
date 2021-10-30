@@ -1,0 +1,104 @@
+#include <iostream>
+#include <stack>
+#include <cstring>
+#include <vector>
+
+using namespace std;
+
+struct Node{
+    int val;
+    Node* next = NULL;
+};
+
+Node* addNodeBefore(Node* head , int val){
+    Node* cur = new Node;
+    cur->val = val;
+    cur->next = head;
+
+    return cur;
+}
+
+void addNode(Node* node ,  int val){
+    Node* now = new Node;
+    now->val = val;
+    now->next = node->next;
+    node->next = now;
+}
+
+void delNodeAfterCur(Node* node){
+    if(node->next != NULL)
+    {
+        Node *temp = node->next;
+        node->next = node->next->next;
+        delete temp;
+    }
+}
+
+void printList(Node* head){
+    int len = 0;
+    Node* now = head;
+    do {
+        len++;
+        cout << now->val << " " ;
+        now = now->next;
+    }while(now != NULL);
+
+    cout << endl;
+    cout << "list len: " << len ;
+}
+
+Node* sortList(int a[] , int len){
+
+    if (len < 1)
+    {
+        return NULL;
+    }
+
+    Node* head = new Node;
+    head->val = a[0];
+    head->next = NULL;
+
+    for (int i = 1; i < len; ++i)
+    {
+        int flag =1;
+        if(a[i] < head->val)
+        {
+            head = addNodeBefore(head , a[i]);
+            continue;
+        }
+
+        Node* cur = head;
+
+        while ( cur->next != NULL)
+        {
+            if (a[i] < cur->next->val)
+            {
+                addNode(cur , a[i]);
+                flag = 0;
+                break;
+            }
+            cur = cur->next;
+        }
+
+        if(cur->next == NULL)
+        {
+            addNode(cur , a[i]);
+        }
+    }
+    return head;
+}
+
+Node* mergeKLists(vector<Node*> &lists){
+    int nums = lists.size();
+    for (int i = 0; i < nums ; ++i) {
+        
+    }
+}
+
+int main () {
+
+    int a[6] = {6 , 7 , 3 , 2  ,5 , 4};
+    Node* head = sortList(a , 6);
+    printList(head);
+
+}

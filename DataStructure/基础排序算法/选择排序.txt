@@ -1,0 +1,53 @@
+#include <iostream>
+
+using namespace std;
+
+const int INF = 10000;
+
+void selSort(int A[] , int n ){
+
+    int j;
+
+    for (int i = 0; i < n - 1; ++i) {
+        int temp = 0;   //store the value of cur
+        int min = 0;
+        int mark = 0;   // to mark the minimum
+        min = A[i];
+        temp = A[i];
+        for (j = i+1 ; j < n ; ++j) {
+            if (min > A[j])
+            {
+                min = A[j];
+                mark = j;
+//                A[j] = temp;  // why can't?
+            }
+        }
+        A[mark] = temp;
+        A[i] = min;
+    }
+
+}
+
+
+int main (){
+
+    int A[100];
+    for (int i = 0; i < 100; ++i) {
+        A[i] = INF;
+    }
+
+    int n ;
+    cout << "How many numbers you would input :" ;
+    cin >> n; // know how many numbers would be input
+
+    for (int i = 0; i < n; ++i) {
+        cin >>A[i];
+    }
+    
+    selSort(A , n);
+
+    for (int i = 0; i < n; ++i) {
+        cout << A[i] << " " ;
+    }
+
+}

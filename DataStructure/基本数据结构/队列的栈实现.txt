@@ -1,0 +1,82 @@
+#include <iostream>
+#include <stack>
+
+using namespace std;
+const int maxN = 100000;
+
+
+template <class Temp>
+class Queue{
+    stack<Temp> stk_1;  // realize stack
+    stack<Temp> stk_2;
+    stack<Temp> stk_3; 
+    int size = 0;
+public:
+
+    void push(Temp elem){
+        while(!stk_1.empty()){
+            stk_2.push(stk_1.top());
+            stk_1.pop();
+        }
+        stk_1.push(elem);
+        while(!stk_2.empty()){
+            stk_1.push(stk_2.top());
+            stk_2.pop();
+        }
+        stk_3.push(elem);
+        size++;
+    }
+
+    Temp front(){
+        return stk_1.top();
+    }
+
+    Temp tail(){
+        return stk_3.top();
+    }
+
+    void pop(){
+        stk_1.pop();
+        while(!stk_3.empty()){
+            stk_2.push(stk_3.top());
+            stk_3.pop();
+        }
+        stk_2.top();
+        while (!stk_2.empty()){
+            stk_3.push(stk_2.top());
+            stk_2.pop();
+        }
+        size--;
+    }
+
+    void clear(){
+        while(!stk_3.empty()){
+            stk_1.pop();
+            stk_3.pop();
+        }
+        size = 0;
+    }
+
+    bool isEmpty(){
+        return !size;
+    }
+
+
+};
+
+
+
+int main(){
+    Queue<int> que;
+    for (int i = 0; i < 5; ++i) {
+        que.push(i+1);
+    }
+    for (int i = 0; i < 5; ++i) {
+        cout << que.front() << " ";
+        cout << que.tail() << endl;
+        que.pop();
+    }
+        
+
+
+}

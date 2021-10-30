@@ -1,0 +1,81 @@
+#include <iostream>
+using namespace std;
+typedef int dataType;
+
+// 创建栈节点
+struct StackNode{
+    dataType data;
+    StackNode* next = nullptr;
+};
+
+struct Stack{
+    StackNode* top = nullptr;
+    int size = 0;
+};
+
+// 入栈
+void push(Stack* stk , dataType dt){
+    StackNode* newElem = new StackNode;
+    newElem->data = dt;
+    newElem->next = stk->top;
+    stk->top = newElem;
+    stk->size++;
+}
+
+// 出栈
+void pop(Stack* stk){
+    if (stk->size)
+    {
+        StackNode* temp = stk->top;
+        stk->top = stk->top->next;
+        stk->size--;
+        delete temp;
+    }
+}
+
+// 清空栈
+void clear(Stack* stk){
+    while(stk->size)
+    {
+        stk->top = nullptr;
+        stk->size = 0;
+    }
+}
+
+// 获取栈顶元素
+dataType getTop(Stack* stk){
+    return stk->size ? stk->top->data : -1;
+}
+
+// 获取栈的大小
+int getSize(Stack* stk){
+    return stk->size;
+}
+
+// 判空
+bool isEmpty(Stack* stk){
+    return !getSize(stk);
+}
+
+
+int main (){
+
+    Stack* stk = new Stack;
+    cout << isEmpty(stk) << endl;
+
+    for (int i = 0; i < 5; ++i) {
+        push(stk, (i+1)*(i+1) );
+    }
+    cout << endl;
+
+    for (int i = 0; i < 5; ++i) {
+        cout <<"the size is " << getSize(stk) << endl;
+        cout << "the top element is " << getTop(stk) << endl;
+        cout << isEmpty(stk) << "\n" << endl;
+        pop(stk);
+    }
+
+    cout << isEmpty(stk) << endl;
+    cout << getTop(stk) << endl;
+
+}

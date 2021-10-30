@@ -1,0 +1,51 @@
+#include <iostream>
+#include <stack>
+#include <string>
+#include <cstring>
+using namespace std;
+
+int main(){
+
+    stack<string> stk_back;
+    stack<string> stk_forward;
+    string input;
+    string operation;
+    stk_back.push("http://www.acm.org/");
+    while (cin >> operation && operation != "QUIT" ){
+
+        if (operation == "QUIT")
+            return 0;
+
+        if (operation == "VISIT"){
+            cin >> input;
+            stk_back.push(input);
+            while (!stk_forward.empty())
+                stk_forward.pop();
+        }
+
+        if (operation == "FORWARD"){
+            if (stk_forward.empty()){
+                cout << "Ignored" << endl;
+                continue;
+            }
+            else {
+                stk_back.push(stk_forward.top());
+                stk_forward.pop();
+            }
+        }
+
+        if (operation == "BACK"){
+            if (stk_back.top() == "http://www.acm.org/"){
+                cout << "Ignored" << endl;
+                continue;
+            }else{
+                stk_forward.push(stk_back.top());
+                stk_back.pop();
+            }
+        }
+
+        cout << stk_back.top() << endl;
+    }
+
+    return 0;
+}

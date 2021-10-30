@@ -1,0 +1,23 @@
+#include<iostream>
+#include<cstring>
+using namespace std;
+
+int main(){
+	int n, m;
+	cin >> n >> m;
+	int worth[30];
+	int vital[30];
+	int dp[30005];
+	for (int i = 0; i < m; i++){
+		cin >> worth[i] >> vital[i];
+	}
+	memset(dp, 0, sizeof(dp));
+	
+	for (int i = 0; i < m; i++ ){
+		for (int j = n; j >= worth[i]; j--){
+			dp[j] = max(dp[j], dp[j - worth[i]] + worth[i]*vital[i]);
+		}
+	}	
+	
+	cout << dp[n] << " " ;
+}

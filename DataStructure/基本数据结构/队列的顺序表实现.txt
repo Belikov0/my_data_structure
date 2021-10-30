@@ -1,0 +1,79 @@
+#include <iostream>
+using namespace std;
+typedef int dataType;
+const int maxN = 10000;
+
+
+template <class Temp>
+class Queue{
+    Temp data[maxN];
+    int  head = 0;
+    int tail = 0;
+	
+public:
+	void push(Temp value){
+		data[tail++] = value;
+	}
+	
+	void pop(){
+		head++;
+	}
+	
+	Temp front(){
+		return (head != tail) ? data[head] : -1;
+	}
+	
+	Temp back(){
+		return (head != tail) ? data[tail-1] : -1;
+	}
+	
+	int size(){
+		return (tail-head);
+	}
+	
+	bool isEmpty(){
+		return (head == tail);
+	}
+	
+	void clear(){
+		head = tail = 0;
+	}
+};
+
+// 入栈
+void push (Queue* que , dataType dt){
+    que->data[++que->tail] = dt;
+}
+
+
+void pop (Queue* que){
+    que->emptyHead++;
+}
+
+void clearQueue(Queue* que){
+    que->emptyHead = que->tail = 0;
+}
+
+dataType getFront(Queue* que){
+    return (que->emptyHead != que->tail) ? que->data[que->emptyHead + 1] : -1 ;
+}
+
+dataType  getBack(Queue* que){
+    return (que->emptyHead != que->tail) ? que->data[que->tail] : -1;
+}
+
+int getSize(Queue* que){
+    return que->tail - que->emptyHead;
+}
+
+bool isEmpty(Queue* que){
+    return (que->emptyHead == que->tail);
+}
+
+
+int main (){
+
+   
+
+}
+

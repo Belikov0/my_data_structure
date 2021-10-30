@@ -1,0 +1,172 @@
+//反转链表
+
+
+#include <iostream>
+#include <stack>
+
+using namespace std;
+
+struct Node{
+    int val;
+    Node* next = NULL;
+};
+
+Node* addNodeBefore(int val , Node* head) {
+    Node* now = new Node;
+    now->next = head;
+    now->val = val;
+    return now;
+}
+
+void addNode(int val , Node* node){
+    Node* now = new Node;
+    now->val = val;
+    now->next = node->next;
+    node->next = now;
+
+}
+
+void delNode(Node* node){   // delete the node after the 'node'
+    if(node->next == NULL)
+    {
+        Node* temp = node->next;
+        node->next = node->next->next;
+        delete temp;
+    }
+}
+
+void printAll (Node* head){
+    Node* now = head;
+    while(now != NULL)
+    {
+        cout << now->val << " " ;
+        now = now->next;
+    }
+    cout << endl;
+}
+
+
+Node* initLinkedList(int a[] , int len){   // use an array and its length to initialize a linked list
+    Node* head = new Node;
+    head->val = a[0];
+    Node* cur = head;
+
+    for (int i = 1; i <len; ++i) {
+        addNode(a[i] , cur);
+        cur = cur->next;
+    }
+//    cout << cur->next << endl;
+//    cout << cur << endl;
+    return head;
+}
+
+Node* reverse_1(Node* head){
+
+    Node* cur = head;
+    Node* record = NULL;
+    do
+    {
+        Node* next = cur->next;
+        cur->next = record;
+        record = cur;
+        cur = next;
+    }while (cur != NULL);
+
+    return record;
+}
+
+
+Node* reverse_2(Node* head){
+    Node* cur = head;           // to reach the node which point to NULL
+    Node* lastOne = new Node;   //
+    Node* newHead = new Node;
+    newHead = NULL;   // to stress that the end must point to NULL
+
+    do
+    {
+        while (cur->next != NULL)
+        {
+            lastOne = cur;
+            cur = cur->next;
+        }
+
+        lastOne->next = NULL;
+        cur->next = lastOne;
+
+        if (newHead == NULL)  // first turn needs this to initialize the head of a new linked list
+        {                       // and only runs one time
+            newHead = cur;
+        }
+
+        cur = head;  // recall
+    }while (lastOne != head);  // lastOne->next == NULL && lastOne == head means the head of
+                                // original linked list is at the end of the new list
+    return newHead;
+
+}
+
+
+Node* reverse_3(Node* head){  // using stack to realize the reverse
+    stack<Node*> S;   // create a stack S to store and reverse the linked list
+
+    Node* cur = head;
+    Node* newHead = new Node;
+
+    while (cur != NULL)
+    {
+        S.push(cur);
+        cur = cur->next;
+    }
+
+    newHead = S.top();
+    S.pop();
+    Node* store = newHead;
+
+    while (!S.empty())
+    {
+        store->next = S.top();
+        S.pop();
+        store = store->next;
+    }
+    store->next = NULL; // the current store is the head of original linked list and its 'next' dose not point to NULL
+
+    return  newHead;
+
+}
+
+Node* reverse_4(Node* head){ // using recursion to realize reverse
+    Node* newHead = new Node;
+
+    if(head->next == NULL)  // if true , now 'head' is the end of original list
+    {
+        newHead = head;
+        return newHead;
+    }
+
+    newHead = reverse_4(head->next);  // if we want to reverse head , we need to  reverse head->next first
+    head->next->next = head;       // 'head->next' has been reversed to 'newHead' and the head->next at the end of the list
+    head->next = NULL;              // so let head->next point to head ,and let head point to NULL
+
+    return newHead;
+}
+
+int main (){
+
+
+    int a[9] = {5,7,8,8,9,3,0,6,1};
+    int len = sizeof(a)/sizeof(a[0]);
+    cout << len << endl;
+//    Node* head = insertSort(a , len);
+//    printAll(head);
+    Node* head = initLinkedList(a , len);
+    printAll(head);
+    head = reverse_1(head);
+    printAll(head);
+    head = reverse_2(head);
+    printAll(head);
+    head = reverse_3(head);
+    printAll(head);
+    head = reverse_4(head);
+    printAll(head);
+
+}

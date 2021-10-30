@@ -1,0 +1,86 @@
+#include <iostream>
+#include <cstring>
+
+using namespace std;
+
+template <class Temp>
+class ListNode{
+public:
+    Temp data;
+    ListNode<Temp>* pre = nullptr;
+    ListNode<Temp>* next = nullptr;
+
+};
+
+template <class Temp>
+class List{
+public:
+    ListNode<Temp>* head = new ListNode<Temp>;
+    int size = 0;
+
+    void addNodeAfterHead(Temp value){
+        ListNode<Temp>* now = new ListNode<Temp>;
+        now->data = value;
+        if (head->next != nullptr)
+        {
+            head->next->pre = now;
+            now->next = head->next;
+        }
+        head->next = now;
+        size++;
+    }
+
+    void addNodeAfter(ListNode<Temp>* node, Temp value){
+        ListNode<Temp>* now = new ListNode<Temp>;
+        now->data = value;
+        if (node->next != nullptr)
+        {
+            node->next->pre = now;
+            now->next = node->next;
+        }
+        now->pre = node;
+        node->next = now;
+        size++;
+    }
+
+    void dalNode(ListNode<Temp>* node){
+        ListNode<Temp>* temp = node;
+        //  判断是否是头结点指向的结点
+        if(node->pre != nullptr)
+            node->pre->next = node->next;
+        else
+            head->next = node->next;
+        // 判断是否是尾结点
+        if (node->next != nullptr)
+            node->next->pre = node->pre;
+        delete temp;
+        size--;
+    }
+
+
+};
+
+int main (){
+
+    List<double> list ;
+
+    for (int i = 0; i < 6; ++i) {
+        list.addNodeAfterHead(i);
+    }
+
+    ListNode<double>* cur = new ListNode<double>;
+    cur = list.head->next;
+    for (int i = 0; i <list.size ; ++i) {
+        cout << cur->data << " ";
+        if (cur->next != nullptr)
+            cur = cur->next;
+    }
+
+    cout << endl;
+    for (int i = 0; i < list.size; ++i) {
+        cout << cur->data << " ";
+        if (cur->pre != nullptr)
+            cur = cur->pre;
+    }
+
+}

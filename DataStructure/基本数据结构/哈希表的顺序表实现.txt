@@ -1,0 +1,94 @@
+#include <iostream>
+
+using namespace std;
+const int maxN = 19;
+const int nullKey = 20;
+
+int hashFunction(int key){ 
+    return key%maxN;
+}
+
+template <class Temp>
+int getKey(Temp a){  // 不同类型的值用于获得key值的函数不同， 在此例中默认Temp型为int型
+    return a;
+}
+
+template <class Temp>
+class HashTable{
+public:
+     Temp data[maxN];
+    int size = 0;
+
+    // 初始化哈希表
+    void initHash(){
+        for(int i = 0; i < maxN ; i++)
+            data[i] = nullKey;   // 初始化一个不能取到的key值表示不存在
+    }
+
+    // 将查找类的函数返回值设为bool， 将可能正确的地址传入函数中查询是否有，若没有则需要改变
+    // 因此传递的是指针, 如果找到，那么地址值由add接收
+    bool elemSearch(Temp dt, int* subscript ){
+        int key = getKey(dt);
+        int supposedAdd = hashFunction(key);
+        
+        while (data[supposedAdd] != key)
+        {          // 查找该位置上的key是否与键值相等，若不等则表示冲突
+            * subscript = hashFunction(*subscript + 1); // 由取余法，这样可以遍历整个哈希表
+            if (data[supposedAdd] == nullKey || supposedAdd == hashFunction(key) )
+                return 0; // 如不存在则返回空，add的值不改变
+        }
+        * subscript = supposedAdd; // 如果存在则将存在的位置赋给add，在函数外获得查找元素的下标值
+        return 1;
+    }
+    
+    
+    bool insert(Temp dt){
+        int key = getKey(dt);
+        int subscript = hashFunction(key);
+        int text_subscript = subscript;
+        while (elemSearch(key, &text_subscript)){
+            return 0;
+        }
+        while (data[subscript] != nullKey){
+            subscript = hashFunction((subscript + 1));
+        }
+        data[subscript] = dt;
+        size++;
+        return 1;
+    }
+
+    bool delElem(Temp dt){
+        int key = getKey(data);
+        int subscript = hashFunction(key);
+        if (!elemSearch(key))
+            return 0;
+        data[subscript] = nullKey;
+        size--;
+        return 1;
+    }
+
+
+};
+
+
+int main (){
+
+    HashTable<int> table;
+    table.initHash();
+
+    int add = 13;
+
+    table.insert(371);
+    table.insert(291);
+    int addOf;
+
+    table.elemSearch(371, &addOf);
+    cout << addOf << endl;
+    
+    if (table.elemSearch(371, &add))
+        cout << "Existing " << endl;
+    
+    table.elemSearch(291, &addOf);
+    cout << addOf << endl;
+
+}

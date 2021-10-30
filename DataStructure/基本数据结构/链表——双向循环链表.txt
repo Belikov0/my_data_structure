@@ -1,0 +1,114 @@
+#include <iostream>
+#include <cstring>
+
+using namespace std;
+
+template <class Temp>
+class ListNode{
+public:
+    Temp data;
+    ListNode<Temp>* pre = nullptr;
+    ListNode<Temp>* next = nullptr;
+
+};
+
+template <class Temp>
+class List{
+public:
+    ListNode<Temp>* head = new ListNode<Temp>;
+    ListNode<Temp>* rear = new ListNode<Temp>;
+    int size = 0;
+
+    void addNodeAfterHead(Temp value){
+        ListNode<Temp>* now = new ListNode<Temp>;
+        now->data = value;
+        if (head->next != nullptr)
+        {
+            head->next->pre = now;
+            now->next = head->next;
+            now->pre = rear;
+            head->next = now;
+            rear->next = now;
+        }
+        else
+        {
+            rear = now;
+            head->next = rear;
+            rear->next = rear;
+            rear->pre = rear;
+        }
+        size++;
+    }
+
+    void addNodeAfter(ListNode<Temp>* node, Temp value){
+        if (node == head)
+        {
+            addNodeAfterHead(value);
+            return;
+        }
+        ListNode<Temp>* now = new ListNode<Temp>;
+        now->data = value;
+        if (node->next != nullptr)
+        {
+            node->next->pre = now;
+            now->next = node->next;
+        }
+        now->pre = node;
+        node->next = now;
+        size++;
+        return;
+    }
+
+    void delNode(ListNode<Temp>* node){
+        ListNode<Temp>* temp = node;
+        //  判断是否是头结点指向的结点,保证起始点不丢失
+        if(head->next == node)
+        {
+           head->next = head->next->next;
+           rear->next = head->next;
+           head->next->pre = rear;
+        }
+        else
+        {
+            node->pre->next = node->next;
+            node->next->pre = node->pre;
+            // 如果删除了的是最后一个节点，将头结点的pre指向rear成为新的头结点
+            rear = head->next->pre;
+        }
+        delete temp;
+        size--;
+    }
+
+    void output(){
+        if (head->next == nullptr){
+            cout << "No element in this list!";
+            return;
+        }
+        ListNode<Temp>* cur = head->next;
+        for (int i = 0; i < size; ++i) {
+            cout << cur->data << " ";
+            cur = cur->next;
+        }
+        return;
+    }
+
+};
+
+int main (){
+
+    List<double> list ;
+
+    for (int i = 0; i < 6; ++i) {
+        list.addNodeAfterHead(i);
+    }
+
+    ListNode<double>* cur = new ListNode<double>;
+    cur = list.head->next;
+    for (int i = 0; i < list.size; ++i) {
+        cout << cur->data << " ";
+        cur = cur->pre;
+    }
+
+    list.output();
+
+}

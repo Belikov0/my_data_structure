@@ -1,0 +1,180 @@
+#include <iostream>
+#include <cstring>
+#include <queue>
+
+using namespace std;
+
+// common variable
+int sz, sx, sy;
+int lv = 0, row = 0, col = 0;
+char dungeon[30][30][30];
+
+// unique for dfs
+int vis_dfs[30][30][30];
+int time = 0;
+const int TRAPPED = 10000;
+int minTime = TRAPPED;
+
+// unique for bfs
+int vis_bfs[30][30][30] ;
+int gz, gx, gy;
+struct Grid{
+    int z;
+    int x;
+    int y;
+    Grid() : z(0), x(0), y(0) {}
+    Grid(int a, int b, int c) : z(a), x(b), y(c) {}
+}; // used for queue
+
+
+int dire[6][3] = {   { 1, 0, 0},  // up
+                     {-1, 0, 0},  // down
+                     { 0, 1, 0},  // front
+                     { 0,-1, 0},  // back
+                     { 0, 0, 1},  // right
+                     { 0, 0,-1},  // left
+}; // used for controlling the direction
+
+bool inMap(int z, int x, int y){
+    return (z >= 0 && x >= 0 && y >= 0 && z < lv && x < row && y < col);
+}
+
+void initDungeon(int lv, int row, int col){
+    char ch ;
+    for (int i = 0; i < lv; ++i) {
+        for (int j = 0; j < row; ++j) {
+            for (int k = 0; k < col; ++k) {
+                cin >> ch;
+                dungeon[i][j][k] = ch;
+                if (ch == 'S'){
+                    sz = i;
+                    sx = j;
+                    sy = k;
+                }
+                if (ch == 'E'){
+                    gz = i;
+                    gx = j;
+                    gy = k;
+                }
+            }
+        }
+    }
+}
+
+
+void dfs(int z, int x, int y){    // time limit exceeded using depth first search
+
+    if (time > minTime)  // cut branch
+        return;
+
+    if (dungeon[z][x][y] == 'E')
+    {
+        minTime = min(minTime, time);
+        return;
+    }
+
+    vis_dfs[z][x][y] = 1;               // if not goal, mark the grid and avoid goal being marked
+    int dz = 0, dx = 0, dy = 0;
+
+    for (int i = 0; i < 6 ; i++) {
+        dz = z + dire[i][0];
+        dx = x + dire[i][1];
+        dy = y + dire[i][2];
+        if (!inMap(dz, dx, dy) || dungeon[dz][dx][dy] == '#' || (dz == sz && dx == sx && dy == sy)
+            || vis_dfs[dz][dx][dy] != 0 )
+            continue;
+
+        time++;
+        dfs(dz, dx, dy);
+
+        vis_dfs[dz][dx][dy] = 0;  // back trace, be linked to "vis_dfs[z][x][y] = 1;"
+        time--;
+    }
+}
+
+void bfs(int z, int x, int y){
+
+    int dz = 0, dx = 0, dy = 0;
+    queue<Grid> markedGrid;
+    markedGrid.push(Grid(z, x, y));
+
+    while (!markedGrid.empty()){
+        Grid cur = markedGrid.front();
+        markedGrid.pop();
+
+        if (dungeon[cur.z][cur.x][cur.y] == 'E')
+            break;
+
+        for (int i = 0; i < 6; ++i) {
+
+            dz = cur.z + dire[i][0];
+            dx = cur.x + dire[i][1];
+            dy = cur.y + dire[i][2];
+            if (!inMap(dz, dx, dy) || dungeon[dz][dx][dy] == '#' || vis_bfs[dz][dx][dy] != 0 )
+                continue;  // vis_bfs != 0 means the gird has been marked
+
+            markedGrid.push(Grid(dz, dx, dy));
+            // essential point of bfs, to record the minimum steps
+            vis_bfs[dz][dx][dy] = vis_bfs[cur.z][cur.x][cur.y] + 1;
+        }
+    }
+}
+
+int main(){
+
+// usd for dfs
+//    int store[100];
+//    int times = 0;
+//    memset(store, 0, sizeof(store));
+//
+//    while(true){
+//
+//        memset(vis_dfs, 0, sizeof (vis_dfs));
+//
+//        cin >> lv ;
+//        cin >> row;
+//        cin >> col;
+//        if (lv == 0 && row == 0 && col == 0)
+//            break;
+//        initDungeon(lv, row, col);
+//
+//        dfs(sz, sx, sy);
+//
+//        store[times++] = minTime; // used for output
+//        minTime = TRAPPED;
+//    }
+//
+//    // output
+//    for (int i = 0; i < times; ++i) {
+//        if (store[i] == TRAPPED)
+//            cout << "Trapped!" << endl;
+//        else
+//            cout << "Escaped in " << store[i] << " minute(s)." << endl;
+//    }
+
+// usd for bfs
+    int store[100];
+    int times = 0;
+    memset(store, 0, sizeof(store));
+
+    while(true){
+
+
+        cin >> lv >> row >> col;
+        if (lv == 0 && row == 0 && col == 0)
+            break;
+        memset(vis_bfs, 0, sizeof(vis_bfs));
+
+        initDungeon(lv, row, col);
+        bfs(sz, sx, sy);
+        store[times++] = vis_bfs[gz][gx][gy];
+//        cout << vis_bfs[gz][gx][gy] << endl;
+    }
+
+    for (int i = 0; i < times; ++i) {
+        if (store[i] == 0 )
+            cout << "Trapped!" << endl;
+        else
+            cout << "Escaped in " << store[i] << " minute(s)." << endl;
+    }
+}

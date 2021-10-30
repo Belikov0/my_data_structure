@@ -1,0 +1,142 @@
+
+// realized by operating array
+	include <iostream>
+
+	using namespace std;
+
+	const int INF = 100000;
+
+	void merge(int A[] , int len){
+
+		int temp;
+		if (len == 1 )
+		{
+			return;
+		}
+
+		int len1 = len/2;
+		int len2 = len - len1;
+		// use INF to avoid checking if the array is empty
+		int left_INF[len1 +1];
+		int right_INF[len2 + 1];
+
+		int left[len1];
+		int right[len2];
+
+		// init two arrays
+		for (int i = 0; i < len1; ++i) {
+			left[i] = A[i];
+		}
+		for (int i = 0 ; i < len2; ++i) {
+			right[i] = A[len1+i];
+		}
+
+		merge(left , len1);    // use merge to sort son arrays
+		merge(right , len2);
+
+		// use merged arrays to init
+		for (int k = 0; k < len1; ++k) {
+			left_INF[k] = left[k];
+		}
+		for (int k = 0; k < len2; ++k) {
+			right_INF[k] = right[k];
+		}
+
+		left_INF[len1] = INF;
+		right_INF[len2] = INF;
+
+		int i = 0;
+		int j = 0;
+
+		for (int k = 0 ; k <len ; k++)
+		{
+			if (left_INF[i] > right_INF[j])
+			{
+				A[k] = right[j];
+				j++;
+			}
+			else
+			{
+				A[k] = left[i];
+				i++;
+			}
+		}
+	}
+
+
+	int main () {
+
+		int A[11] = {8, 15 ,6 ,4 ,1 ,2 , 3 ,2 ,3 ,7 ,5};
+		int len = sizeof (A) / sizeof (A[0]);
+		merge(A , len);
+		for (int i = 0; i < len; ++i) {
+			cout << A[i] <<" ";
+		}
+	}
+	
+// realized by operating subscript
+	#include <iostream>
+
+	using namespace std;
+
+	const int INF = 100000;
+
+	void merge(int A[] , int begin , int dot ,  int end){
+
+		int n1 = dot - begin +1;
+		int n2 = end - dot;
+
+		int left[n1+1] , right[n2+1];
+
+		// init two arrays
+		for (int i = 0; i < n1; ++i) {
+			left[i] = A[begin + i];
+		}
+		for (int i = 0; i < n2; ++i) {
+			right[i] = A[dot + i +1];
+		}
+
+		left[n1] = INF;
+		right[n2] = INF;
+
+		int i = 0;
+		int j = 0;
+
+		for (int k = begin ; k <= end ; k++)
+		{
+			if (left[i] > right[j])
+			{
+				A[k] = right[j];
+				j++;
+			}
+			else
+			{
+				A[k] = left[i];
+				i++;
+			}
+		}
+	}
+
+	void merge_Sort (int A[] , int begin , int end) {
+		if (begin < end)
+		{
+			int dot = (begin+end)/2;
+			merge_Sort(A , begin , dot);
+			merge_Sort(A , dot+1 , end);
+			merge(A , begin , dot , end);
+		}
+
+	}
+
+	int main () {
+
+		int A[11] = {2 , 3 , 15 , 8 , 6 , 4 , 1 , 2 , 3 , 7 , 5};	
+		merge_Sort(A , 0 , 10);
+		for (int i = 0; i < 10; ++i) {
+			cout << A[i] <<" ";
+		}
+
+	}
+	
+	
+	

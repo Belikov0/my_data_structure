@@ -1,0 +1,68 @@
+#include <iostream>
+#include <queue>
+
+using namespace std;
+const int maxN = 100000;
+
+template <class Temp>
+class Stack{
+    queue<Temp> que_1;
+    queue<Temp> que_2;
+    int sizeOfStack = 0;
+
+public:
+    void push(Temp value){
+        que_1.push(value);
+        sizeOfStack++;
+    }
+
+    void pop(){
+        for (int i = 0; i < sizeOfStack - 1; ++i) {
+            que_2.push(que_1.front());
+            que_1.pop();
+        }
+        que_1.pop();
+        for (int i = 0; i < sizeOfStack - 1; ++i) {
+            que_1.push(que_2.front());
+            que_2.pop();
+        }
+        sizeOfStack--;
+    }
+
+    Temp top(){
+        return isEmpty() ? -1 : que_1.back();
+    }
+
+    int size(){
+        return sizeOfStack;
+    }
+
+    void clear(){
+        while(!que_1.empty())
+            que_1.pop();
+        sizeOfStack = 0;
+    }
+
+    bool isEmpty(){
+        return que_1.empty();
+    }
+    
+};
+
+int main() {
+    
+    Stack<int> stk;
+    for (int i = 0; i < 5; ++i) {
+        stk.push(i+1);
+    }
+
+    for (int i = 0; i < 5; ++i) {
+        cout << stk.top() << " ";
+    }
+
+    stk.clear();
+    cout << stk.size() << endl;
+    cout << stk.isEmpty() << endl;
+
+
+}

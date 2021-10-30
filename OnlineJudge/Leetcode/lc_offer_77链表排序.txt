@@ -1,0 +1,99 @@
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    const int INF = -100001;
+
+    ListNode* addNodeBefore(ListNode* head, int val){
+        ListNode* cur = new ListNode(val, head);
+        return cur;
+    }
+
+    void merge(int* A, int begin, int dot, int end){
+        int n1 = dot-begin+1;
+        int n2 = end-dot;
+
+        int left[25001];
+        int right[25001];
+
+        for (int i = 0; i < n1; ++i) {
+            left[i] = A[i+begin];
+        }
+        for (int i = 0; i < n2; ++i) {
+            right[i] = A[i+dot+1];
+        }
+        left[n1] = INF;
+        right[n2] = INF;
+
+        int i = 0,j = 0;
+
+        for (int k = begin; k <= end; ++k) { // descending order
+            if (left[j] < right[i])
+                A[k] = right[i++];
+            else
+                A[k] = left[j++];
+        }
+    }
+
+    void mergeSort(int* A, int begin, int end){
+        if (end > begin){
+            int dot = (begin+end)/2;
+            mergeSort(A, begin, dot);
+            mergeSort(A, dot+1, end);
+            merge(A, begin, dot, end);
+        }
+    }
+
+    // int partition(int* a, int left, int right){  // time limit exceeded
+    //     int pivot = a[left];
+    //     while (left < right){
+    //         while (left < right && a[right] <= pivot)
+    //             right--;
+    //         a[left] = a[right];
+
+    //         while (left < right && a[left] >= pivot)
+    //             left++;
+    //         a[right] = a[left];
+    //     }
+    //     a[left] = pivot;
+    //     return left;
+    // }
+
+    // void quickSort(int* a, int begin, int end){
+    //     if(end > begin){
+    //         int mid = partition(a, begin, end);
+    //         quickSort(a, begin, mid-1);
+    //         quickSort(a, mid+1, end);
+    //     }
+    // }
+
+    ListNode* sortList(ListNode* head) {
+        if(head == nullptr || head->next == nullptr )
+            return head;
+
+        ListNode* cur = head;
+        int a[50000];
+        int len = 0;
+        while (cur!= nullptr){
+            a[len++] = cur->val;
+            cur = cur->next;
+        }
+        
+        mergeSort(a, 0, len-1); // O(nlgn)
+        // quickSort(a, 0, len-1);
+
+        ListNode* newHead = new ListNode(a[0]);
+        for (int i = 1; i < len; ++i) {      // O(n)
+            newHead = new ListNode(a[i], newHead); // reverse, add node before
+        }
+        return newHead;
+    }
+};

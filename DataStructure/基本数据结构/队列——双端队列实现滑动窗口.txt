@@ -1,0 +1,52 @@
+#include <iostream>
+#include <vector>
+
+using namespace std;
+const int maxN = 100000;
+
+struct queElem{
+    int val;
+    int subscript; // essential to control the left of window 
+};
+
+vector<int> slidingWindow(vector<int>& nums, int k){
+    int len = nums.size();
+    vector<queElem> que(len); // used to realize sliding window by storing a descending queue
+    vector<int> ans(len-k+1,0);      // used to store answers
+    int ans_i = 0;        // the subscript of "ans";
+    int head = 0, rear = 0; // head pointer and rear pointer
+    int head_subscript = 0;
+
+    for (int i = 0; i < len; ++i) {
+        if (que[head].subscript == i-k && i >k-1)  
+            head++; // pop front
+
+        while (rear != head && nums[i] > que[rear-1].val) {
+            rear--;     // pop back
+        }
+
+        que[rear].val = nums[i];
+        que[rear++].subscript = i;
+
+        if (i >= k-1)
+            ans[ans_i++] = que[head].val;
+    }
+
+    return ans;
+}
+
+
+int main(){
+    int k = 3;  // length of sliding window
+    vector<int> nums = {1,3,-1,-3,5,3,6,7};
+
+
+    vector<int> ans = slidingWindow(nums, k);
+    int len = ans.size();
+
+    for (int i = 0; i < len; ++i) {
+        cout << ans[i] << " ";
+    }
+
+
+}

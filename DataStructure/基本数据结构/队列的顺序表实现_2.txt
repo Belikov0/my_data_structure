@@ -1,0 +1,74 @@
+#include <iostream>
+using namespace std;
+typedef int dataType;
+const int maxN = 10000;
+
+template <class Temp>
+class Queue{
+public:
+    Temp data[maxN];
+    int emptyHead = 0;
+    int tail = 0;
+
+    void push(Temp dt){
+        data[++tail] = dt;
+    }
+
+    void pop(){
+        emptyHead++;
+    }
+
+    void cleanQueue(){
+        emptyHead = tail = 0;
+    }
+
+    bool isEmpty(){
+        return (emptyHead == tail);
+    }
+
+    Temp getFront(){
+        return !isEmpty() ? data[emptyHead+1] : -1 ;
+    }
+
+    Temp getBack(){
+        return !isEmpty() ? data[tail] : -1;
+    }
+
+    int size(){
+        return tail-emptyHead;
+    }
+};
+
+int main (){
+
+    Queue<int> que ;
+
+    for (int i = 0; i < 5; ++i) {
+        que.push((i+1)*(i+1));
+    }
+
+    for (int i = 0; i < 5; ++i) {
+        cout << "the size is " << que.size() << endl;
+        cout << "the data is " << que.getFront()<< endl;
+        char* str;
+        if (que.isEmpty())
+        {
+            str =(char*) " ";
+        }
+        else
+        {
+            str = (char*)" not ";
+        }
+        cout << "It is" << str <<"an empty queue" << endl;
+        que.pop();
+        cout << endl;
+    }
+
+    cout << endl;
+    if (que.isEmpty())
+        cout << "It is empty";
+    else
+        cout << "Not empty" ;
+
+}
+

@@ -1,0 +1,41 @@
+
+// 回文子串
+
+#include <iostream>
+
+using namespace std;
+
+
+bool isPalindrome(char* A);// 1.判断回文串 ,返回true or false
+
+int violentSearch(char* str ); // 暴力查找最长回文串
+int centralSearch(char* str ); // 中心扩展
+int dynamicSearch(char* string1);  //动态规划
+
+
+
+int main(){
+
+    char A[10] = "leve";
+    cout << isPalindrome(A) << endl;
+
+
+}
+
+
+
+bool isPalindrome(char* A){
+    int end =  strlen(A)-1;
+    int start = 0;
+    int flag = 1;
+    while (start < end)
+    {
+        if(A[start++] != A[end--])
+        {
+            flag = 0;
+            break;
+        }
+
+    }
+    return flag;
+}

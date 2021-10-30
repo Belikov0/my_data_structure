@@ -1,0 +1,77 @@
+// LIS dp and binary
+
+// DP
+#include <iostream>
+#include <cstring>
+
+using namespace std;
+
+
+int main(){
+
+    int len;
+    cin >> len;
+    int a[100005];
+    int dp[100005]; // 以下标i为末尾的最长升子数列为dp[i]
+    for (int i = 0; i < len; i++){
+        cin >> a[i];
+        dp[i] = 1; 
+    }
+    int i = 0, j = 1;
+    for (i = 0; i < len; i++){
+        for (j = 0; j < i; j++){
+            if (a[j] < a[i]){
+                dp[i] = max(dp[j]+1, dp[i]); 
+            }
+        }
+    }
+    int ans = 0;
+    for (int i = 0; i < len; i++){
+        if (ans < dp[i])
+            ans = dp[i];
+    }
+    cout << ans << endl;
+
+}
+
+// Binary
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+const int INF = 0x7f7f7f7f;
+
+int main(){
+
+    int size;
+    cin >> size;
+    int a[100010];
+    int dp[100010]; 
+    int t[100010];
+    for (int i = 1; i <= size; i++){
+        cin >> a[i];
+        dp[i] = INF;
+    }
+
+    // initialization
+    dp[1] = a[1];
+    int len = 1;
+    
+    for (int i = 2; i <= size; i++){
+        if (a[i] > dp[len]){
+        	dp[++len] = a[i];
+        	
+		}            
+        else if (a[i] < dp[len]){
+				 
+        }
+    }
+    
+    for (int i = 0; i < len; i++){
+    	
+	}
+    
+    cout << len;
+	
+}
+

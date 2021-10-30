@@ -1,0 +1,209 @@
+//AC
+#include <iostream>
+#include <queue>
+#include <cstring>
+
+using namespace std;
+typedef pair<int, int> grid;
+
+
+int col, row;
+char board[41][41];
+char sx, sy;
+int dir_l[8][2] = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}, {-1, 0}, {0, 1}, {1, 0}, {0, -1} };
+int dir_r[8][2] = {{-1, 0}, {0, -1}, {1, 0}, {0, 1}, {-1, 0}, {0, -1}, {1, 0}, {0, 1} };
+int vis[41][41];
+const int INF = 10000;
+
+int count_l = 0, count_r = 0;
+bool isFirstStep_l = 1, isFirstStep_r = 1;
+
+void initBoard(int row, int col){
+    char ch;
+    for (int i = 0; i < row; ++i) {
+        for (int j = 0; j < col; ++j) {
+            cin >> ch;
+            board[i][j] = ch;
+            if (ch == 'S')
+            {
+                sx = i;
+                sy = j;
+                board[i][j] = '.';
+            }
+        }
+    }
+}
+
+void initVis(int vis[41][41]){
+    for (int i = 0; i < 41; ++i) {
+        for (int j = 0; j < 41; ++j) {
+            vis[i][j] = INF;
+        }
+    }
+}
+
+bool inMap(int x, int y){
+    return (x>=0 && y>=0 && x<row && y<col);
+}
+
+
+void initBasicData(){
+    count_l = 0, count_r = 0;
+    isFirstStep_l = 0, isFirstStep_r = 0;
+}
+
+void dfs_l(int x, int y, int direct){
+    count_l++;
+    if (board[x][y] == 'E')
+        return;
+
+    int dx = x;
+    int dy = y;
+
+    //for first step, to confirm which direct to go for start
+    if (isFirstStep_l == 1)
+    {
+        for (int i = 0; i < 4; ++i) {
+            dx = x + dir_l[i][0];
+            dy = y + dir_l[i][1];
+            if (!inMap(dx, dy) || board[dx][dy] == '#') {
+                continue;
+            } else {
+                isFirstStep_l = 0;
+                direct = i;
+            }
+        }
+    }
+
+    if (direct == 0)
+        direct = direct +4;
+    for (int i = direct-1; i < direct+3; ++i) {
+
+        dx = x + dir_l[i][0];
+        dy = y + dir_l[i][1];
+
+        if(!inMap(dx, dy)  || board[dx][dy] == '#' )
+            continue;
+
+
+        int newDir = i;
+        if (newDir >= 4)
+            newDir = newDir -4;
+
+        dfs_l(dx, dy, newDir);
+
+        return; // As if it goes out of recursion, it can not be legal, so return it
+    }
+}
+
+void dfs_r(int x, int y, int direct){
+    count_r++;
+    if (board[x][y] == 'E')
+        return;
+
+    int dx = x;
+    int dy = y;
+
+    //for first step, to confirm which direct to go for a start
+    if (isFirstStep_r == 1)
+    {
+        for (int i = 0; i < 4; ++i) {
+            dx = x + dir_r[i][0];
+            dy = y + dir_r[i][1];
+            if (!inMap(dx, dy) || board[dx][dy] == '#') {
+                continue;
+            } else {
+                isFirstStep_r = 0;
+                direct = i;
+            }
+        }
+    }
+
+    if (direct == 0)
+        direct = direct +4;
+    for (int i = direct-1; i < direct+3 ; ++i) {
+
+        dx = x + dir_r[i][0];
+        dy = y + dir_r[i][1];
+
+        if(!inMap(dx, dy)  || board[dx][dy] == '#' )
+                continue;
+
+        int newDir = i ;
+        if (newDir >= 4)
+            newDir = newDir -4;
+
+        dfs_r(dx, dy, newDir);
+
+        return;
+    }
+
+}
+
+int bfs(int x, int y, int step){
+
+    queue<grid> markedGrid;
+    markedGrid.push(make_pair(x,y));
+
+    int dx = x;
+    int dy = y;
+    vis[dx][dy] = 1;
+//    cout <<"the grid is: " << dx << " " << dy <<endl;
+//    cout <<"visited value is: " << vis[dx][dy] << endl;
+
+    while (!markedGrid.empty())
+    {
+        grid cur = markedGrid.front();
+        markedGrid.pop();
+//        cout << cur.first << " "<< cur.second <<endl;
+//        cout << vis[cur.first][cur.second] <<endl;
+        if (board[cur.first][cur.second] == 'E')
+        {
+            return vis[cur.first][cur.second];
+        }
+
+        for (int i = 0; i < 4; ++i) {
+
+            dx = cur.first + dir_l[i][0];
+            dy = cur.second + dir_l[i][1];
+            if(!inMap(dx, dy) || vis[dx][dy] != INF || board[dx][dy] == '#' ) {
+                continue;
+            }
+            markedGrid.push(make_pair(dx, dy));
+            vis[dx][dy] = vis[cur.first][cur.second] + 1;  // 用于记录步数
+        }
+    }
+    return -1;
+}
+
+
+int main (){
+    int times;
+    cin >> times;
+    int repo_l[10];
+    int repo_r[10];
+    int min_bfs[10];
+
+    for (int i = 0; i < times; ++i)
+    {
+        cin >> col >> row;
+        memset(board, '#', sizeof(board));
+        initBoard(row, col);
+        initVis(vis);
+
+        dfs_l(sx, sy, 0);
+        dfs_r(sx, sy, 0);
+        min_bfs[i] = bfs(sx, sy, 1);
+        repo_l[i] = count_l;
+        repo_r[i] = count_r;
+//        cout << count_l << " " << count_r << " " << min_bfs;
+        initBasicData();
+    }
+
+    for (int i = 0; i < times; ++i) {
+        cout << repo_l[i] << " " << repo_r[i] << " " << min_bfs[i] << endl;
+    }
+}
+
+
+

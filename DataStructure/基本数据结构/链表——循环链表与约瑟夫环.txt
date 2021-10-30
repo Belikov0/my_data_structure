@@ -1,0 +1,101 @@
+#include <iostream>
+#include <cstring>
+
+using namespace std;
+
+struct ListNode{
+    int val = 0;
+    ListNode* next = nullptr;
+};
+
+
+template <class temp>
+class List{
+public:
+    ListNode* head = new ListNode; // 在此代码中，head并不参与循环，它仅指向循环中的第一个
+    ListNode* rear = new ListNode;
+    int size = 0;
+
+    void addNode(ListNode* node, int val ){
+        ListNode* cur = new ListNode;
+        cur->next = node->next;
+        cur->val = val;
+        node->next = cur;
+        size++;
+    }
+
+    void addAfterHeed(int val){
+        ListNode* cur = new ListNode;
+        cur->next = head->next;
+        cur->val = val;
+        head->next = cur;
+        rear->next = cur;
+        size++;
+    }
+
+    void initCircularList(int val){
+        rear->val = val;
+        head->next = rear;
+        rear->next = rear;
+        size++;
+    }
+
+};
+
+void delNode(ListNode* node){
+    if(node->next != nullptr){
+        ListNode* temp = node->next;
+        node->next = node->next->next;
+        delete temp;
+    }
+}
+
+int vis[100];
+
+void JosephusSolution(List<int> list , int M ){
+    int nums = 1, i = 0;
+    int leftN = list.size;
+    ListNode* node = list.head->next;
+    while(leftN != 0)
+    {
+        ListNode* lastNode = new ListNode;
+        while(nums != M){
+            nums++;
+            lastNode = node;
+            node = node->next;
+        }
+        vis[i++] = node->val;
+        nums = 1;
+        if(leftN > 1)
+        {
+            delNode(lastNode);
+            node = lastNode->next;
+        }
+        leftN--;
+    }
+
+    for (int j = 0; j < list.size; ++j) {
+        cout << vis[j] << " ";
+    }
+}
+
+int main(){
+
+    List<int > aList ;
+
+    cout << "Please input the size of the circle and start number: ";
+    int M;
+    int sizeOfCircle;
+
+    cin >> sizeOfCircle >> M;
+    memset(vis, 0 ,sizeOfCircle*sizeof(int));
+
+    //初始化环
+    aList.initCircularList(sizeOfCircle);
+    for (int i = sizeOfCircle-1; i > 0; --i) {
+        aList.addAfterHeed(i);
+    }
+
+    JosephusSolution(aList, M);
+    return 0;
+}

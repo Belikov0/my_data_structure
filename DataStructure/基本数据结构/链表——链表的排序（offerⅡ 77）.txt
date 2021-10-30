@@ -1,0 +1,127 @@
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+#include <iostream>
+
+using namespace std;
+
+
+ struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode() : val(0), next(nullptr) {}
+    ListNode(int x) : val(x), next(nullptr) {}
+    ListNode(int x, ListNode *next) : val(x), next(next) {}
+};
+
+
+class Solution {
+public:
+    int len = 1;
+    const int INF = -100001;
+
+    ListNode* addNodeBefore(ListNode* head, int val){
+        ListNode* cur = new ListNode(val, head);
+        return cur;
+    }
+
+    void merge(int* A, int begin, int dot, int end){
+        int n1 = dot-begin+1;
+        int n2 = end-dot;
+
+        int left[25001];
+        int right[25001];
+
+        for (int i = 0; i < n1; ++i) {
+            left[i] = A[i+begin];
+        }
+        for (int i = 0; i < n2; ++i) {
+            right[i] = A[i+dot+1];
+        }
+        left[n1] = INF;
+        right[n2] = INF;
+
+        int i = 0,j = 0;
+
+        for (int k = begin; k <= end; ++k) {
+            if (left[j] < right[i])
+                A[k] = right[i++];
+            else
+                A[k] = left[j++];
+        }
+    }
+
+    void mergeSort(int* A, int begin, int end){
+        if (end > begin){
+            int dot = (begin+end)/2;
+            mergeSort(A, begin, dot);
+            mergeSort(A, dot+1, end);
+            merge(A, begin, dot, end);
+        }
+    }
+
+
+    ListNode* sortList(ListNode* head) {
+        if(head == nullptr || head == nullptr )
+            return head;
+
+        ListNode* cur = head;
+        while (cur->next != nullptr){
+            cur = cur->next;
+            len++;
+        }
+        int A[50000];
+
+        cur = head;
+        for (int i = 0; i < len; ++i){
+            A[i] = cur->val;
+            cur = cur->next;
+        }
+        mergeSort(A,0, len-1);
+
+        ListNode* newHead = new ListNode(A[0]);
+        for (int i = 1; i < len; ++i) {
+            newHead = new ListNode(A[i], newHead);
+        }
+
+        return newHead;
+    }
+
+};
+
+void printAll(ListNode* node ){
+    int len = 0;
+    while (node != NULL)
+    {
+        len++;
+        cout << node->val << "  ";
+        node = node->next;
+    }
+
+    cout << endl;
+    cout << "list len: " << len << endl;
+}
+
+int main(){
+    int A[] = {-1, 5, 3, 4, 0};
+    Solution a ;
+    ListNode* head = new ListNode(-1);
+    head = a.addNodeBefore(head, 5);
+    head = a.addNodeBefore(head, 3);
+    head = a.addNodeBefore(head, 4);
+    head = a.addNodeBefore(head, 0);
+    printAll(head);
+
+    ListNode* newHead = a.sortList(head);
+    printAll(newHead);
+    cout << a.len << endl;
+
+
+}

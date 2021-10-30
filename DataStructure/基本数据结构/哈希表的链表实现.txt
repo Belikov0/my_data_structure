@@ -1,0 +1,160 @@
+/**************************
+ * Created by asus on 2021/8/17.
+ * 在此实现
+ * 使用的是void* 表示了所有数据类型
+ * 实际使用中直接定义对应类型的hash表即可
+ ******************/
+
+//
+// Created by asus on 2021/8/17.
+//
+
+#include <iostream>
+#include <cstring>
+#include <string>
+#include <string.h>
+using namespace std;
+
+
+struct ListNode{   // using linked list to realize hashtable
+    int key;
+    void* data;
+    ListNode* next;
+};
+
+typedef ListNode* ListHead;
+typedef ListNode* Elem;
+
+void addNodeAfterHead(ListHead head , int key , void* value){ // 用于插入数据
+    Elem newOne = new ListNode;
+    newOne->key = key;
+    newOne->data = value;
+    newOne->next = head->next;
+    head->next = newOne;
+
+}
+
+void delNextOne(ListNode* node ){
+    if(node->next != NULL)
+    {
+        ListNode* temp = node->next;
+        node->next = node->next->next;
+        free(temp);  // 释放被删除元素的内存空间
+    }
+}
+
+struct HashTable{
+    int tableSize;
+    ListHead* theList;
+};
+
+int hashFunc(int key , int hashSize){
+    return (key%hashSize);
+}
+
+// 初始化哈希表，即初始一个头结点数组
+HashTable* initHash(int tableSize){
+    HashTable* table = new HashTable;
+
+    table->tableSize = tableSize;
+
+    table->theList =(ListHead* )malloc(sizeof (ListHead) * tableSize);
+
+    for (int j = 0; j < tableSize; ++j) {
+        table->theList[j] = (ListNode* )malloc(sizeof (ListNode)) ;
+        memset(table->theList[j], 0, sizeof (ListNode));
+    }
+
+    cout << "initiation successful!  table size is " << table->tableSize << endl;
+    return table;
+
+}
+
+Elem Find(HashTable* table , int key){
+
+    int i = hashFunc(key , table->tableSize);
+    ListHead head = table->theList[i];
+    Elem target = head->next;
+
+    while (target != NULL && target->key != key )
+        target = target->next;
+
+    return target;
+}
+
+void insert(HashTable* table , int key , void* value){
+    Elem cur = Find(table , key);
+
+    if (cur == NULL)
+    {
+        int i = hashFunc(key , table->tableSize);
+        ListHead head = table->theList[i];
+
+        addNodeAfterHead(head , key , value); // 前插法
+    }
+    else
+        cout << "the key already exists" << endl;
+
+    //    cout << "insertion successful!  for" << " key = " << key << endl;
+    return;
+}
+
+void deleteElem(HashTable* table, int key){
+    Elem target = new ListNode;
+    Elem lastOne = new ListNode;
+
+    int subscript_i = hashFunc(key, table->tableSize);
+    ListHead head = table->theList[subscript_i];
+
+    lastOne = head;
+    target = lastOne->next;
+    while (target != NULL && target->key != key)
+    {
+        lastOne = target;
+        target = target->next;
+    }
+
+    if (target)   // 若存在，则删除
+    {
+        delNextOne(lastOne);
+        //        cout << "\nDelete successfully! the key is " << key << endl;
+    }
+    //    else
+    //        cout << "\nObject of the key not found " << endl;
+}
+
+void* retrieve(Elem elem){
+    return elem ? elem->data : NULL;
+}
+
+bool isEmpty(HashTable* table){
+    for (int i = 0; i < table->tableSize; ++i) {
+        if (table->theList[i])
+            return false;
+    }
+    return true;
+}
+
+//
+
+int main () {
+
+    char* elem[] = { (char*)"Bob", (char*)"Tom", (char*)"Title" };
+
+    HashTable* S = initHash(10);
+    insert(S, 1, elem[0]);
+    insert(S, 2, elem[1]);
+    insert(S, 3, elem[2]);
+    deleteElem(S, 2);
+
+    cout << endl;
+
+    for (int j = 0; j < 4; ++j) {
+        Elem element = Find(S, j);
+
+        if (element != NULL)
+            cout << (const char* ) retrieve(element) << " , stored key is " << element->key <<endl;
+        else
+            cout << "Not found , key = " << j  << endl;
+    }
+}

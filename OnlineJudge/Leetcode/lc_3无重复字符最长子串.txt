@@ -1,0 +1,49 @@
+class Solution {
+public:
+    // int lengthOfLongestSubstring(string s) {
+    //     int len = s.length();
+    //     if ( len < 2)
+    //         return len;
+
+    //     int maxLen = 0;
+    //     int curLen = 0;
+    //     int left = 0, right = 1;
+        
+    //     while (right <len){
+    //         for(int k = left; k < right; k++){
+    //             if (s[k] == s[right]){
+    //                 left = k+1;
+    //                 break;
+    //             }
+    //         }
+    //         curLen = right-left+1;
+    //         right++;
+    //         maxLen = max(maxLen, curLen);
+    //     }
+
+    //     return maxLen;
+    // }
+
+    int lengthOfLongestSubstring(string s) {
+        int len = s.length();
+        if ( len < 2)
+            return len;
+
+        int left = 0, right = 0;
+        int maxLen = 0, curLen = 0;
+        vector<int> store(128);
+        // memset(store, 0, sizeof(store));
+
+        while (right < len){
+            store[s[right]]++;
+            while (store[s[right]] == 2){
+                store[s[left]]--;
+                left++; 
+            }
+            curLen = right-left+1;
+            maxLen = max(maxLen, curLen);
+            right++;
+        }
+        return maxLen;
+    }    
+};

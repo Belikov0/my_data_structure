@@ -1,0 +1,102 @@
+//AC
+#include <iostream>
+
+using namespace std;
+
+int rowLen, colLen;
+int board[20][20];
+int dir[4][2] = { {-1,0}, {0,1}, {1,0}, {0,-1}};
+int sx = -1, sy = -1;
+int minSteps = 11;
+
+bool inMap(int x, int y){
+    return (x >= 0 && y>=0 && x < rowLen && y < colLen );
+}
+
+void initBoard(int x, int y){
+    for (int i = 0; i < x; ++i) {
+        for (int j = 0; j < y; ++j) {
+            int m = 0;
+            cin >> m;
+            board[i][j] =  m;
+            if (m == 2){
+                sx = i;
+                sy = j;
+                board[i][j] = 0;
+            }
+        }
+    }
+}
+
+
+void dfs(int x, int y, int step){
+
+    if(step > 10)
+        return;  // essential cut branch, after 10 steps, the answer would not be accepted even if 
+                // it can get to goal finally
+    int nx, ny ;
+    for (int i = 0; i < 4; i++)
+    {
+        nx = x, ny = y;
+        int dx, dy;
+
+        // 判断第一步是不是石头， 即1
+        int px = nx+dir[i][0];
+        int py = ny+dir[i][1];
+        if (px < 0 || py < 0 || board[px][py] == 1 )
+            continue;
+
+        int flag = 0;
+        do  {
+            dx = nx;  // 前进一步
+            dy = ny;
+            nx += dir[i][0];
+            ny += dir[i][1];
+        }while(inMap(nx, ny) && board[nx][ny] == 0);
+
+        if (!inMap(nx, ny))
+            continue;
+
+        if (board[nx][ny] == 3)
+        {
+            minSteps = min(minSteps,step);
+            break; // cut branch , in this loop ,it is absolutely the minimum one
+        }
+
+        if (board[nx][ny] == 1) {
+            board[nx][ny] = 0;
+            flag = 1;
+        }
+
+        dfs(dx, dy, step+1);
+
+        if (flag == 1)
+            board[nx][ny] = 1;
+    }
+
+    return;
+}
+
+int main (){
+
+    int times = 0;
+    int stepStore[100] ;
+
+    while(1){
+
+        cin >> colLen >> rowLen;
+        if (colLen == 0 && rowLen == 0)
+            break;
+
+        initBoard(rowLen, colLen);
+        dfs(sx, sy, 1);
+        if (minSteps > 10 )  // 如果没有结果或者大于10
+            minSteps = -1;
+        stepStore[times++] = minSteps;
+        minSteps = 11;
+    }
+
+    for (int i = 0; i < times; ++i) {
+        cout << stepStore[i] << endl;
+    }
+}

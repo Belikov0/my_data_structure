@@ -1,0 +1,87 @@
+#include <iostream>
+#include <cstring>
+#include <algorithm>
+using namespace std;
+const int INF = 0x7f7f7f7f;
+
+struct fC{
+	int north;
+	int south;
+	
+	bool operator>(fC& b){
+		return this->north > b.north;
+	} 
+	
+	bool operator<(fC& b){
+		return this->north < b.north;
+	}
+	
+};
+
+int partitial(fC* a, int left, int right){
+	int pivot = a[left].north;
+	fC temp = a[left];
+	while (right >left){
+		while (right > left && a[right].north > pivot)
+			right--;
+		a[left] = a[right];
+		
+		while (right > left && a[left].north < pivot)
+			left++;
+		a[right] = a[left];
+	}
+	a[left] = temp;
+	return left;
+}
+
+int partitial(fC* a, int left, int right){
+	fC pivot = a[left];
+	while (right > left ){
+		while (right > left && a[right] > pivot)
+			right--;
+		a[left] = a[right];
+		
+		while (right > left && pivot > a[left])
+			left++;
+		a[right] = a[left];
+	}
+	a[left] = pivot;
+	return left;
+}
+
+void quickSort(fC* a, int begin, int end){
+	if (end >begin){
+		int mid = partitial(a, begin, end);
+		quickSort(a, begin, mid-1);
+		quickSort(a, mid+1, end);
+	}
+}
+
+bool compare(fC& x, fC& y){
+	return x.north < y.north;
+}
+
+int main(){
+	int n; 
+	cin >> n;
+	fC fc[50010];
+	int dp[50010];
+	for (int i = 1; i <= n; i++){
+		cin >> fc[i].north >> fc[i].south;
+		dp[i] = INF;
+	}
+//	sort(fc+1, fc+n+1, compare);
+	dp[1] = fc[1].south;
+	int ans = 1;
+	
+	for (int i = 2; i <= n; i++){
+		if (fc[i].south > dp[ans])
+			dp[++ans] = fc[i].south;
+		else if (fc[i].south < dp[ans])
+			*lower_bound(dp+1, dp+ans+1, fc[i].south ) = fc[i].south ;
+		
+	}
+	
+	cout << ans;
+		
+}

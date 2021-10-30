@@ -1,0 +1,107 @@
+#include <iostream>
+#include <cstring>
+#include <queue>
+
+using namespace std;
+
+
+struct grid{
+    int x;
+    int y;
+    grid* parent ;
+    grid* son ;  //
+    grid() : x(0), y(0), parent(NULL), son(NULL) {}
+    grid(int a,int b) : x(a), y(b), parent(NULL), son(NULL)  {}
+};
+
+grid* root;
+grid* goal;
+
+const int INF = 100000;
+
+int maze[5][5] = {
+        0, 1, 0, 0, 0,
+        0, 1, 0, 1, 0,
+        0, 0, 0, 0, 0,
+        0, 1, 1, 1, 0,
+        0, 0, 0, 1, 0,
+};
+
+// to record where it is and the steps
+int vis[5][5];
+
+bool inMap(int x, int y){
+    return (0 <= x && 0 <= y && x < 5 && y < 5 );
+}
+
+void outPutGrid(grid* root){
+    while(root){
+        cout << "(" << root->x << ", " << root->y << ")" <<  endl;
+        root = root->son;
+    }
+}
+
+void outputGrid_NoPointerSon(grid* p){ // using recursion to realize it without pointer "son"
+
+    if (p != NULL){
+        outputGrid_NoPointerSon(p->parent);
+        cout << "(" << p->x << ", " << p->y << ")" << endl;
+    }
+}
+
+void bfs(int dx, int dy ){
+
+    queue<grid*> que;
+    grid* first = new grid(dx, dy);
+    // init
+    que.push(first);
+    // 0 step for initial
+    vis[dx][dy] = 0;
+
+    int gx = 4;
+    int gy = 4;
+    int dirX[4] = {0 , 1 , 0 , -1};
+    int dirY[4] = {1 , 0 , -1 , 0};
+
+    while(que.size() != 0)
+    {
+        grid* p = que.front();
+        que.pop();
+        if (p->x == 4 && p->y== 4){
+            goal = p;
+            while(p->parent){  // to create a chain to get the path
+                p->parent->son = p;
+                p = p->parent;
+            }
+            root = p;
+            break;
+        }
+
+
+        // right down left up
+        for (int i = 0; i < 4; ++i) {
+
+            dx = p->x + dirX[i];
+            dy = p->y+ dirY[i];
+            grid* cur = new grid(dx, dy);
+
+            // vis == INF means not been visited yet
+            if (inMap(dx, dy) && maze[dx][dy] == 0 && vis[dx][dy] == 0)
+            {
+                cur->parent = p;
+                que.push(cur);
+                vis[dx][dy] = vis[p->x][p->y] + 1;
+            }
+        }
+    }
+}
+
+int main() {
+
+    memset(vis, 0, sizeof(vis));
+    bfs(0 , 0) ;
+    outPutGrid(root);  //  268k 0ms
+
+//    outputGrid_NoPointerSon(goal);  // 268k 0ms
+
+}

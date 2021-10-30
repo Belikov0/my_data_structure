@@ -1,0 +1,104 @@
+
+// 存在剪枝的问题——如何剪枝
+
+	#include <iostream>
+	using namespace std;
+
+	int minV[20] , minS[20] ;
+	int Min = 200000;
+
+	void initLimitedValue()
+	{
+		minV[0] = 0;
+		minS[0] = 0;
+		for (int i = 1; i <= 20; ++i)
+		{
+			minV[i] = minV[i-1] + i*i*i;
+			minS[i] = minS[i-1] + 2*i*i + i*i - (i-1)*(i-1);
+		}
+	}
+
+	int getMaxVolume(int r, int h, int M){
+		int max = 0;
+		for (int i = M ; i > 0  ; --i) {
+	//        if (r <=0 || h <=0)
+	//        {
+	//            max = 0;
+	//            break;
+	//        }
+			max += (r)*(r--)*(h--);
+		}
+
+		return max;
+	}
+
+	int bottom = 0;
+	int flag = 1;
+	//int count = 0;
+
+	void dfs(int volume , int sumS , int M  , int a , int b ){
+		int r = 0;
+		int h = 0;
+
+		if (sumS >= Min) // 无论到哪一步，只要sumS比最小面积大，那么return
+			return;
+
+		if (M == 0 && volume == 0)
+		{
+			flag = 0;
+			Min = sumS;
+	//                count++;
+	//                cout << Min << " ";
+			return;
+		}
+		else if(M == 0 && volume > 0)
+		{
+			return;
+		}
+
+		//
+		for (r = M ; r < a ; ++r)
+		{
+			if (bottom == M)   //  if bottom , init top area == r * r once only
+				sumS = r * r ;
+
+			for (h = M ;  h < b ; ++h)
+			{
+				// 剪枝1 获取剩余层数能拥有的最大体积，仅当
+				if(r >= M && h >= M)
+				{
+					int nextMaxVolume = getMaxVolume(r - 1, h - 1, M - 1);
+					if (volume - r * r * h > nextMaxVolume)
+						continue;
+				}
+
+				// 剪枝2 获得剩余层数的最小体积
+				if (volume - r*r*h < minV[M-1] )
+					break;
+
+				dfs(volume - r*r*h , sumS + 2 * r * h, M-1, r, h);
+			}
+		}
+	}
+
+
+	int main () {
+
+
+		initLimitedValue();
+		int volume;
+		int M;
+		cin >> volume >> M;
+		bottom = M;
+
+		dfs(volume , 0 , M , 100 , 100);
+
+		if (flag == 1){
+			Min = 0;
+		}
+
+		cout << Min << endl;
+	//    cout << count << endl;
+		//    return 0;
+
+	}

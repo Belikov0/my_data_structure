@@ -1,0 +1,103 @@
+
+// 修改后
+
+#include <iostream>
+#include <cstring>
+#include <stack>
+
+using namespace std;
+
+typedef pair<int , char> grid;
+stack<grid> stk;
+grid board[27][27] ;
+int row, col;
+
+void initBoard(grid board[27][27] , int row , int col){
+    char ch = 'A' ;
+    for (int i = 1; i <= col; ++i)
+    {
+        for (int j = 1 ; j <= row ; ++j)
+        {
+            board[j][i] = make_pair(j ,ch);
+        }
+        ch++;
+    }
+}
+
+int dir[8][2] = {{-1, -2}, {1, -2}, {-2, -1}, {2, -1}, {-2, 1}, {2, 1}, {-1, 2}, {1, 2}};
+int mark[27][27];  // to mark the grid if it has been visited
+bool isGoal= false;
+
+bool inMap(int x, int y){
+    return (x>0 && y>0 && x<=row && y<=col);
+}
+
+void dfs(int x, int y,int count ){
+
+    if(count == row * col)
+    {
+        grid outPrint[30];
+        for (int i = count-1 ; i >= 0 ; --i) {
+            outPrint[i] = stk.top();
+            stk.pop();
+        }
+        //
+        for (int i = 0; i < count; ++i) {
+            cout << outPrint[i].second << outPrint[i].first ;
+        }
+        isGoal = true;
+        cout << endl;
+
+        return;
+    }
+
+    int k;
+    for ( k = 0; k < 8 ; ++k)
+    {
+        int dx = x + dir[k][0];
+        int dy = y + dir[k][1];
+
+        if (inMap(dx, dy) && mark[dx][dy] != 1 )
+        {
+            mark[dx][dy] = 1;
+            stk.push(board[dx][dy]);
+
+            dfs(dx, dy, count+1); 
+
+            if (isGoal == true)
+                break;
+
+            mark[dx][dy] = 0;
+            stk.pop();
+        }
+    }
+    if ( k == 8 && count == 1 )
+    {
+        cout << "impossible" << endl;
+        return ;
+    }
+}
+
+int main (){
+
+    int times;
+    cin >> times;
+
+    for (int i = 0; i < times; ++i) {
+
+        cin >> row >> col ;
+        memset(mark, 0 ,sizeof(mark));
+
+        initBoard(board , row, col);
+        mark[1][1] = 1;              // visiting grid from A1
+        stk.push(board[1][1]);
+
+        cout << "Scenario #" << i+1  << ":" << endl;
+        dfs(1, 1, 1);
+        isGoal = false;
+        cout << endl;
+    }
+
+    return 0;
+
+}

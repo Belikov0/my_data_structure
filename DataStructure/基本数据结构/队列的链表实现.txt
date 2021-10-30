@@ -1,0 +1,119 @@
+#include <iostream>
+using namespace std;
+typedef int dataType;
+
+template <class Temp>
+class QueueNode{
+public:
+    Temp data;
+    QueueNode* next;
+};
+
+template <class Temp>
+class Queue{
+public:
+    QueueNode<Temp>* tail = new QueueNode<Temp>;
+    QueueNode<Temp>* emptyHead = new QueueNode<Temp>;
+    int size ;
+    Queue(): size(0) {}
+ 
+    void push(Temp data){
+        if(!size){
+            emptyHead->next = tail;
+            tail->data = data;
+        } else{
+            QueueNode<Temp>* cur = new QueueNode<Temp>;
+            tail->next = cur;
+            cur->data = data;
+            tail = cur;
+        }
+        size++;
+    }  
+
+    void pop(){
+        size--;
+        QueueNode<Temp>* temp = emptyHead->next;
+        if (size>0)
+        {
+            emptyHead->next = emptyHead->next->next;
+            delete temp;
+        }
+        else if (size == 0)
+        {
+            emptyHead->next = new QueueNode<Temp>;
+            tail = new QueueNode<Temp>;
+            delete temp;
+        }
+        else
+        {
+            size++;
+            return;
+        }
+    }
+
+    void clear(){
+        while(size)
+            pop();
+    }
+
+    Temp getFront(){
+        if(size)
+            return emptyHead->next->data;
+        else
+            return 0;
+    }
+
+    Temp getBack(){
+        if(size)
+            return tail->data;
+        else
+            return 0;
+    }
+
+    bool isEmpty(){
+        return !size;
+    }
+
+
+};
+
+//template <class Temp>
+//void push(Queue<Temp>* que , Temp data){
+//    if (!que->size )
+//    {
+//        que->emptyHead->next = que->tail;
+//        que->tail->data = data;
+//    }
+//    else
+//    {
+//        QueueNode<Temp>* cur = new QueueNode<Temp>;
+//        cur->next =que->emptyHead->next;
+//        cur->data = data;
+//        que->emptyHead->next = cur;
+//    }
+//    que->size++;
+//}
+
+
+
+int main () {
+    Queue<int>* que  = new Queue<int>;
+
+    for (int i = 0; i < 5; ++i) {
+        que->push( (i+1)*(i+1));
+    }
+
+    cout << que->isEmpty() << endl;
+    for (int i = 0; i < 5; ++i) {
+        cout << "the front element is "<< que->getFront() << endl;
+        cout << "the back element is " << que->getBack() <<endl;
+        cout << "the size is "<< que->size << endl;
+        que->pop();
+        cout << endl;
+    }
+
+//    que->clear();
+    cout << "loop down  " << endl;
+    cout << que->isEmpty() << endl;
+
+}

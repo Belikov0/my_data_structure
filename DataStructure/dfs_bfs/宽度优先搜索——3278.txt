@@ -1,0 +1,81 @@
+#include <iostream>
+#include <queue>
+#include <cstring>
+
+
+using namespace std;
+const int maxN = 100001; // large number, consider if stack overflow
+int record[maxN];
+
+void bfs (int N, int K ){
+
+    if (N >= K) {   //the farmer can go back by N -1 only
+        record[K] = N - K;
+        return;
+    }
+
+    queue<int> que;
+    que.push(N);
+
+    int cur;
+    int ne ;
+    while (!que.empty()){
+        cur = que.front();
+        que.pop();
+
+//        ne = cur * 2;
+//        if (record[ne] == 0 && ne > 0 && cur < K && ne < maxN){ // if cur == 0, ne will be 0 eternally, meaningless
+//            if (ne == K)       // you should put "ne < maxN" before "record[ne] == 0" or the array will be illegal
+//                return;           
+//            que.push(ne);
+//            record[ne] = record[cur] + 1;
+//        }
+//
+//        ne = cur + 1;
+//        if (record[ne] == 0 && cur < K){  // if cur > K, the farmer can go back by cur-1 only
+//            if (cur == K)
+//                return;
+//            que.push(ne);
+//            record[ne] = record[cur] + 1;
+//        }
+//
+//        ne = cur - 1;
+//        if (record[ne] == 0 && ne >= 0 ){    /
+//            if (ne == K)
+//                return;
+//            que.push(ne);
+//            record[ne] = record[cur] + 1;
+//        }                //
+
+        for (int i = 0; i < 3; ++i) {
+            if (i == 0)
+                ne = cur - 1;
+            else if (i == 1)
+                ne = cur + 1;
+            else
+                ne = cur * 2;
+
+            if (ne < 0 || ne >= maxN) // cut branch
+                continue;
+
+            if (!record[ne]){
+                que.push(ne);
+                record[ne] = record[cur] + 1;
+            }
+
+            if (ne == K)
+                return;  // if at goal before pushed into queue
+        }                // cuz if pushed into queue first, it will take much more times of loop to calculate
+    }                    // until the correct answer be popped
+}
+
+
+int main(){
+
+    int N,K;
+    cin >> N >> K;
+    memset(record, 0, sizeof (record));
+    bfs(N, K);
+    cout << record[K] << endl;
+
+}

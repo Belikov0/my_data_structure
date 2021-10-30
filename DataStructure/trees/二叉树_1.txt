@@ -1,0 +1,100 @@
+#include <iostream>
+#include <queue>
+
+using namespace std;
+
+template <class Temp>
+class binaryTreeNode{
+private:
+    Temp element;
+    binaryTreeNode<Temp>* leftChild, * rightChild;
+    int numbers;
+
+public:
+
+    binaryTreeNode() : leftChild(nullptr), rightChild(nullptr) {}
+    binaryTreeNode(Temp elem) : element(elem), leftChild(nullptr), rightChild(nullptr) {}
+
+    void initTreePre(){ // pre order input
+        Temp m;
+        cin >> m;
+
+        if (m == '#') {
+            element = '#';
+            return;
+        }
+
+        element = m;
+        numbers++;
+        leftChild = new binaryTreeNode<Temp>;
+        rightChild = new binaryTreeNode<Temp>;
+        leftChild->initTreePre();
+        rightChild->initTreePre();
+    }
+
+
+
+    void preOrderTraversal(){
+        if (element != '#'){
+            cout << element << " ";
+            leftChild->preOrderTraversal();
+            rightChild->preOrderTraversal();
+        }
+    }
+
+    void inOrderTraversal(){
+        if (element != '#'){
+            leftChild->inOrderTraversal();
+            cout << element << " ";
+            rightChild->inOrderTraversal();
+        }
+    }
+
+    void postOrderTraversal(){
+        if (element != '#'){
+            leftChild->postOrderTraversal();
+            rightChild->postOrderTraversal();
+            cout << element << " ";
+        }
+    }
+    void levelOrderTraversal(binaryTreeNode<Temp>* T){
+        queue<binaryTreeNode<Temp>*> que;
+        que.push(T);
+        while (!que.empty()){
+            binaryTreeNode<Temp>* cur = que.front();
+            que.pop();
+
+
+            if (cur->leftChild->element != '#')
+                que.push(cur->leftChild);
+            if (cur->rightChild->element != '#')
+                que.push(cur->rightChild);
+
+            cout << cur->element << " ";
+        }
+    }
+
+    bool empty(){
+        return !numbers;
+    }
+
+    int size(){
+        return numbers;
+    }
+
+};
+
+
+
+
+int main (){
+    binaryTreeNode<char>* T = new binaryTreeNode<char>;
+    T->initTreePre();
+    T->preOrderTraversal();
+    cout << endl;
+    T->inOrderTraversal();
+    cout << endl;
+    T->postOrderTraversal();
+    cout << endl;
+    T->levelOrderTraversal(T);
+}

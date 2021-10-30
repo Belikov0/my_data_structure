@@ -1,0 +1,63 @@
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* mergeTwo(ListNode* a, ListNode* b){
+        if (a == nullptr)
+            return b;
+        if (b == nullptr)
+            return a;
+
+        ListNode* head = new ListNode; // O(1)
+        ListNode* cur = head;
+        while(true){ 
+        if( (a == nullptr && b != nullptr) ||(b != nullptr &&  a->val > b->val )){
+                cur->val = b->val;
+                b = b->next;
+                if ((a == nullptr && b == nullptr))
+                    return head;
+                cur->next = new ListNode;
+                cur = cur->next;
+            }
+        if ((b == nullptr && a != nullptr) || (a != nullptr && a->val <= b->val )){
+                cur->val = a->val;
+                a = a->next;
+                if ((a == nullptr && b == nullptr))
+                    return head;
+                cur->next = new ListNode;
+                cur = cur->next;
+            }
+        }
+    }
+
+    ListNode* merge (vector<ListNode*>& lists, int begin, int end){  // time O(nlgn), space O(lgn)
+        if (begin == end-1)
+            return mergeTwo(lists[begin], lists[end]);
+        else if (begin == end)
+            return lists[begin];
+
+        int mid = (begin+end)/2;
+        ListNode* A =  merge(lists, begin, mid);
+        ListNode* B =  merge(lists, mid+1, end);
+        return mergeTwo(A, B);
+    }
+
+
+    ListNode* mergeKLists(vector<ListNode*>& lists) {
+        ListNode* head = new ListNode;
+       int k = lists.size();
+        if (k == 0)
+            return NULL;
+
+        head = merge(lists, 0, k-1);
+       return head;
+    }
+};

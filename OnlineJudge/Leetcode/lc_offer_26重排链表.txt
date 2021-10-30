@@ -1,0 +1,136 @@
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    // void reorderList(ListNode* head) {  // time limit exceeded
+    //     if (head == nullptr || head->next == nullptr)
+    //         return;
+
+    //     ListNode* slow_1 = head;
+    //     ListNode* slow_2 = head;
+    //     ListNode* quick = head->next;
+
+    //     while (slow_1->next != nullptr && quick->next != nullptr){
+    //         while (quick->next != nullptr ){
+    //             slow_2 = quick;
+    //             quick = quick->next;
+    //         }
+    //         slow_2->next = nullptr;
+    //         quick->next = slow_1->next;
+    //         slow_1->next = quick;
+    //         slow_1 = quick->next;
+    //         quick = slow_1->next;
+    //         slow_2 = slow_1;
+    //     }
+    // }
+
+    // void reorderList(ListNode* head){   // 麻烦的方法，栈加四指针
+    //     if (head == nullptr || head->next == nullptr)
+    //         return;
+
+    //     stack<ListNode*> stk;
+    //     ListNode* cur = head;
+    //     while(cur != nullptr){
+    //         stk.push(cur);
+    //         cur = cur->next;
+    //     }
+    //     ListNode* plus = head;
+    //     ListNode* plusN;
+    //     ListNode* minus = stk.top();
+    //     ListNode* minusN;
+    //     while(true){
+    //         plusN = plus->next; // 储存指针
+    //         stk.pop();
+    //         minusN = stk.top();
+
+    //         if (plus != minus)  // 结点数为奇数的判出语句
+    //             plus->next = minus;
+    //         else{
+    //             plus->next = nullptr;
+    //             return;
+    //         }
+
+    //         if (minus != plusN) // 结点数为偶数的判出语句
+    //             minus->next = plusN;
+    //         else{
+    //             minus->next = nullptr;
+    //             return;
+    //         }
+
+    //         plus = plusN;   // 将储存指针赋予操作指针
+    //         minus = minusN;
+    //     }
+    // }
+
+    
+    ListNode* reverse_1(ListNode* head){
+
+        ListNode* cur = head;
+        ListNode* record = NULL;
+        do
+        {
+            ListNode* next = cur->next;
+            cur->next = record;
+            record = cur;
+            cur = next;
+        }while (cur != NULL);
+
+        return record;
+    }
+
+    ListNode* mergeTwo(ListNode* a, ListNode* b){
+        ListNode* head = a;
+        ListNode* a_ = a->next;
+        ListNode* b_ = b->next;
+
+        while (true){  // 重新排序
+            a->next = b;
+            if (a_ != nullptr ) 
+                b->next = a_;
+            else
+                return head; // 偶数判出
+
+            a = a_;
+            b = b_;
+
+            if (b == nullptr) 
+                return head; // 奇数判出
+
+            a_ = a->next;
+            b_ = b->next;
+        }
+    }
+
+    void reorderList(ListNode* head){
+        if (head == nullptr || head->next == nullptr)
+            return;
+
+        ListNode* node = head;
+        int len = 0;
+        while (node != nullptr){
+            node = node->next;
+            len++;
+        }
+
+        int pivot = (len+1)/2;
+        node = head;
+        ListNode* node_2;
+        int count = 0;
+        while(count < pivot){
+            node_2 = node;
+            node = node->next;
+            count++;
+        }
+        node_2->next = nullptr;
+        node = reverse_1(node);
+        head = mergeTwo(head, node);
+    }
+};

@@ -1,0 +1,76 @@
+#include <iostream>
+#include <cstring>
+
+using namespace std;
+const int maxN = 100000;
+
+
+template <class Temp>
+class stack{
+    int stk[maxN];
+    int pTop = 0;
+public:
+
+    void push(Temp val){
+        stk[pTop++] = val;
+    }
+
+    void pop(){
+        pTop--;
+    }
+
+    void clear(){
+        pTop = 0;
+    }
+
+    int size(){
+        return pTop;
+    }
+
+    Temp top(){
+        return empty() ? -1 : stk[pTop-1];
+    }
+
+    bool empty(){
+        return !pTop;
+    }
+
+};
+
+// 括号匹配算法
+bool bracketCheck(const char* a, int len){
+    stack<char> stk;
+    for (int i = 0; i < len; ++i) {
+        if (a[i] == '(' || a[i] == '{' || a[i] == '['){
+            stk.push(a[i]);
+            continue;
+        }
+
+        if (stk.empty())
+            return false;
+
+        char cur = stk.top();
+        stk.pop();
+
+        if (cur == '(' && a[i] != ')')
+            return false;
+        if (cur == '[' && a[i] != ']')
+            return false;
+        if (cur == '{' && a[i] != '}')
+            return false;
+    }
+    return stk.empty();
+
+}
+
+int main(){
+
+    const char* a = "{[()]}";
+    const char* b = "{{(([}}]]]";
+    int len_a = strlen(a);
+    int len_b = strlen(b);
+    cout << bracketCheck(a, len_a) << endl;
+    cout << bracketCheck(b, len_b) << endl;
+
+
+}
